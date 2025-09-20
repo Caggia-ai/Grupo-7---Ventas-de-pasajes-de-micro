@@ -1,2 +1,65 @@
-# Grupo 7---Ventas-de-pasajes-de-micro
+# Grupo 7---Sistema para gestionar las ventas de pasajes de micro a distintos destinos y en distintas fechas.
+def cargar_lista(destinos_posibles, precios_fijos, lista_dest, lista_cl, lista_micro, lista_precios, cant_pasajeros_micro, precios_por_destino):
+    dni_existentes = set()
+    cant_ventas = int(input("Ingrese la cantidad de pasajes que se vendieron: "))
+    while cant_ventas <= 0:
+        print("La cantidad de ventas ingresada es inválida. Ingrese nuevamente\n")
+        cant_ventas = int(input("\nIngrese la cantidad de pasajes que se vendieron: "))
+
+    for _ in range(cant_ventas):
+        dest = input("\nIngrese el lugar de destino del micro: ").strip()
+        while dest.lower() not in [d.lower() for d in destinos_posibles]:
+            print("Destino inválido, debe elegir uno disponible.")
+            dest = input("Ingrese nuevamente el lugar de destino: ").strip()
+        for d in destinos_posibles:
+            if dest.lower() == d.lower():
+                dest = d
+                break
+        lista_dest.append(dest)
+
+        idx = destinos_posibles.index(dest)
+        precio = precios_fijos[idx]
+        lista_precios.append(precio)
+
+        precios_por_destino[dest] = precios_por_destino.get(dest, 0) + precio
+
+        micro_id = input("\nIngrese el ID del micro: ").strip()
+        while micro_id.isdigit() == False:
+            print("El ID del micro ingresado es inválido. Por favor, ingrese nuevamente.")
+            micro_id = input("\nIngrese el ID del micro: ").strip()
+        lista_micro.append(micro_id)
+
+        cant_pasajeros_micro[micro_id] = cant_pasajeros_micro.get(micro_id, 0) + 1
+
+        nombre = input("Ingrese el nombre del pasajero: ").title()
+        apellido = input("Ingrese el apellido del pasajero: ").title()
+
+        dni = input("Ingrese el DNI del pasajero: ").strip()
+        while not (dni.isdigit() and 7 <= len(dni) <= 8) or dni in dni_existentes:
+            if not dni.isdigit() or not (7 <= len(dni) <= 8):
+                print("El DNI ingresado es inválido. Por favor, ingrese nuevamente.")
+            else:
+                print("Este DNI ya fue ingresado. Por favor ingrese uno diferente.")
+            dni = input("Ingrese el DNI del pasajero: ").strip()
+        dni_existentes.add(dni)
+
+        lista_cl.append([nombre, apellido, dni])
+
+    return lista_dest, lista_cl, lista_micro, lista_precios, cant_pasajeros_micro, precios_por_destino
+
+# Programa principal
+posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gessell", "Mar del Plata", "Miramar", "Necochea"]
+precios_establecidos = [15000, 20000, 30000, 35000, 40000, 45000]
+
+lista_destinos = []
+lista_clientes = []
+lista_micros = []
+lista_precios = []
+cant_pasajeros_micro = {}
+precios_por_destino = {}
+
+lista_destinos, lista_clientes, lista_micros, lista_precios, cant_pasajeros_micro, precios_por_destino = cargar_lista(
+    posibles_destinos, precios_establecidos, lista_destinos, lista_clientes, lista_micros, lista_precios, cant_pasajeros_micro, precios_por_destino
+)
+
 
