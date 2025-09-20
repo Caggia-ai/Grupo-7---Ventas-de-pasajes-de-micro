@@ -33,19 +33,22 @@ def cargar_lista(destinos_posibles, precios_fijos, lista_dest, lista_cl, lista_m
 
         nombre = input("Ingrese el nombre del pasajero: ").title()
         apellido = input("Ingrese el apellido del pasajero: ").title()
-
         dni = input("Ingrese el DNI del pasajero: ").strip()
-        while not (dni.isdigit() and 7 <= len(dni) <= 8) or dni in dni_existentes:
-            if not dni.isdigit() or not (7 <= len(dni) <= 8):
-                print("El DNI ingresado es inválido. Por favor, ingrese nuevamente.")
-            else:
-                print("Este DNI ya fue ingresado. Por favor ingrese uno diferente.")
-            dni = input("Ingrese el DNI del pasajero: ").strip()
-        dni_existentes.add(dni)
-
+        dni = validar_dni(dni, dni_existentes)
+        
         lista_cl.append([nombre, apellido, dni])
 
     return lista_dest, lista_cl, lista_micro, lista_precios, cant_pasajeros_micro, precios_por_destino
+
+def validar_dni(dni, dni_existentes):
+    while not (dni.isdigit() and 7 <= len(dni) <= 8) or dni in dni_existentes:
+        if not dni.isdigit() or not (7 <= len(dni) <= 8):
+            print("El DNI ingresado es inválido. Por favor, ingrese nuevamente.")
+        else:
+            print("Este DNI ya fue ingresado. Por favor ingrese uno diferente.")
+        dni = input("Ingrese el DNI del pasajero: ").strip()
+    dni_existentes.add(dni)
+    return dni
 
 # Programa principal
 posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gessell", "Mar del Plata", "Miramar", "Necochea"]
@@ -61,5 +64,3 @@ precios_por_destino = {}
 lista_destinos, lista_clientes, lista_micros, lista_precios, cant_pasajeros_micro, precios_por_destino = cargar_lista(
     posibles_destinos, precios_establecidos, lista_destinos, lista_clientes, lista_micros, lista_precios, cant_pasajeros_micro, precios_por_destino
 )
-
-
