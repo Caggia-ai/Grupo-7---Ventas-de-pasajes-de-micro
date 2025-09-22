@@ -49,6 +49,60 @@ def validar_dni(dni, dni_existentes):
         dni = input("Ingrese el DNI del pasajero: ").strip()
     dni_existentes.add(dni)
     return dni
+def calcular_ganancias(matriz, precios_establecidos):
+    total_de_ganancias = 0
+    ganancias_por_destino = [0, 0, 0, 0, 0, 0]  
+
+    cantidad_de_viajes = len(matriz[4])  
+
+    for j in range(cantidad_de_viajes):
+        destino = matriz[0][j]
+        pasajeros = matriz[4][j]
+
+        if destino == "Mar de Ajó":
+            ganancias_por_destino[0] += pasajeros * precios_establecidos[0]
+        elif destino == "Pinamar":
+            ganancias_por_destino[1] += pasajeros * precios_establecidos[1]
+        elif destino == "Villa Gesell":
+            ganancias_por_destino[2] += pasajeros * precios_establecidos[2]
+        elif destino == "Mar del Plata":
+            ganancias_por_destino[3] += pasajeros * precios_establecidos[3]
+        elif destino == "Miramar":
+            ganancias_por_destino[4] += pasajeros * precios_establecidos[4]
+        elif destino == "Necochea":
+            ganancias_por_destino[5] += pasajeros * precios_establecidos[5]
+
+    total_de_ganancias = sum(ganancias_por_destino)
+    return [total_de_ganancias] + ganancias_por_destino
+
+def destino_mas_frecuente(matriz, posibles_destinos):
+    a = b = c = d = e = f = 0
+
+    for destino in matriz[0]:
+        if destino == "Mar de Ajó":
+            a += 1
+        elif destino == "Pinamar":
+            b += 1
+        elif destino == "Villa Gesell":
+            c += 1
+        elif destino == "Mar del Plata":
+            d += 1
+        elif destino == "Miramar":
+            e += 1
+        elif destino == "Necochea":
+            f += 1
+
+    destinos= [a, b, c, d, e, f]
+    print(destinos)
+
+    max_frecuencia = max(destinos)
+
+    destinos_mas_frecuentes = []
+    for i, cantidad in enumerate(destinos):
+        if cantidad == max_frecuencia:
+            destinos_mas_frecuentes.append(posibles_destinos[i])
+
+    return destinos_mas_frecuentes
 
 # Programa principal
 posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gesell", "Mar del Plata", "Miramar", "Necochea"]
@@ -64,3 +118,5 @@ precios_por_destino = {}
 lista_destinos, lista_clientes, lista_micros, lista_precios, cant_pasajeros_micro, precios_por_destino = cargar_lista(
     posibles_destinos, precios_establecidos, lista_destinos, lista_clientes, lista_micros, lista_precios, cant_pasajeros_micro, precios_por_destino
 )
+resultados = calcular_ganancias(matriz, precios_establecidos)
+destinos_frecuentes = destino_mas_frecuente(matriz, posibles_destinos)
