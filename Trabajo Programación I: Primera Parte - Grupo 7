@@ -216,12 +216,12 @@ def main():
     precios_por_destino = {}
     
     dia = int(input("Ingrese el día: "))
-        mes = int(input("Ingrese el mes: "))
-        anio = int(input("Ingrese el año: "))
-        if validar_fecha(dia, mes, anio):
-            print("Fecha válida")
-        else:
-            print("Fecha inválida")
+    mes = int(input("Ingrese el mes: "))
+    anio = int(input("Ingrese el año: "))
+    if validar_fecha(dia, mes, anio):
+        print("Fecha válida")
+    else:
+        print("Fecha inválida")
     
     lista_destinos, lista_clientes, lista_micros, lista_precios, cant_pasajeros_micro, precios_por_destino = cargar_lista(
         posibles_destinos, precios_establecidos, lista_destinos, lista_clientes, lista_micros, lista_precios, cant_pasajeros_micro, precios_por_destino
