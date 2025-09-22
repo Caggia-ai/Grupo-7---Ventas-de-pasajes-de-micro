@@ -229,25 +229,6 @@ def main():
         "cant_pasajeros_micro": {},
         "precios_por_destino": {},
     }
-        
-
-    datos = cargar_lista(posibles_destinos, precios_establecidos, datos)
-
-    def main():
-    posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gesell", "Mar del Plata", "Miramar", "Necochea"]
-    precios_establecidos = [15000, 20000, 30000, 35000, 40000, 45000]
-
-    datos = {
-        "destinos": [],
-        "clientes": [],
-        "micros": [],
-        "precios": [],
-        "cant_pasajeros_micro": {},
-        "precios_por_destino": {},
-        "salidas": [],
-        "llegadas": [],
-        "pasajeros": []
-    }
 
     datos = cargar_lista(posibles_destinos, precios_establecidos, datos)
 
