@@ -50,27 +50,27 @@ def validar_dni(dni, dni_existentes):
     dni_existentes.add(dni)
     return dni
 
-def crear_matriz(ldestino):
+def crear_matriz(datos["destinos"]):
     filas = 5
     columnas = len(ldestino)
     matriz = [[0]*columnas for i in range(filas)]
     return matriz
 
-def llenar_matriz(matriz,ldestino,lid,lsalida,lllegada,lpasajeros):
-    fila=len(matriz)
-    columna=len(matriz[0])
+def llenar_matriz(matriz, datos):
+    fila = len(matriz)
+    columna = len(matriz[0])
     for i in range(fila):
         for j in range(columna):
             if i==0:
-                matriz[i][j]=ldestino[j]
+                matriz[i][j] = datos["destinos"][j]
             elif i==1:
-                matriz[i][j]=lid[j]
+                matriz[i][j] = datos["micros"][j]
             elif i==2:
-                matriz[i][j]=lsalida[j]
+                matriz[i][j] = datos["salidas"][j]
             elif i==3:
-                matriz[i][j]=lllegada[j]
+                matriz[i][j] = datos["llegadas"][j]
             else:
-                matriz[i][j]=lpasajeros[j]
+                matriz[i][j] = datos["pasajeros"][j]
     return matriz
 
 def imprimir_matriz(matriz):
@@ -78,17 +78,17 @@ def imprimir_matriz(matriz):
     columnas=len(matriz[0])
     for i in range(filas):
         if i==0:
-            print("\nDestino: ")
+            print("\nDestino: ", end=" ")
         elif i==1:
-            print("\nId del micro: ")
+            print("\nId del micro: ", end=" ")
         elif i==2:
-            print("\nFecha de salida: ")
+            print("\nFecha de salida: ", end=" ")
         elif i==3:
-            print("\nFecha de llegada: ")
+            print("\nFecha de llegada: ", end=" ")
         else:
-            print("\nCant. de pasajeros: ")
+            print("\nCant. de pasajeros: ", end=" ")
         for j in range(columnas):
-            print(matriz[i][j],end=" ")
+            print(matriz[i][j], end=" ")
         print()
 
 def validar_fecha_formato(d, m, a):
@@ -111,7 +111,6 @@ def validar_fecha_formato(d, m, a):
                 return False
     return True
 
-
 def dias_en_mes(m, a):
     if m in [1, 3, 5, 7, 8, 10, 12]:
         return 31
@@ -122,7 +121,6 @@ def dias_en_mes(m, a):
             return 29
         else:
             return 28
-
 
 def sumar_dias(fecha):
     dia, mes, anio = map(int, fecha.split(','))
@@ -221,44 +219,72 @@ def main():
     precios_establecidos = [15000, 20000, 30000, 35000, 40000, 45000]
     
     datos = {
+       "destinos": [],
+        "clientes": [],
+        "micros": [],
+        "precios": [],
+        "salidas": [],
+        "llegadas": [],
+        "pasajeros": [],
+        "cant_pasajeros_micro": {},
+        "precios_por_destino": {},
+    }
+        
+
+    datos = cargar_lista(posibles_destinos, precios_establecidos, datos)
+
+    def main():
+    posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gesell", "Mar del Plata", "Miramar", "Necochea"]
+    precios_establecidos = [15000, 20000, 30000, 35000, 40000, 45000]
+
+    datos = {
         "destinos": [],
         "clientes": [],
         "micros": [],
         "precios": [],
         "cant_pasajeros_micro": {},
-        "precios_por_destino": {}
+        "precios_por_destino": {},
+        "salidas": [],
+        "llegadas": [],
+        "pasajeros": []
     }
 
     datos = cargar_lista(posibles_destinos, precios_establecidos, datos)
 
-    dia_ida = int(input("Ingrese el día: "))
-    mes_ida = int(input("Ingrese el mes: "))
-    anio_ida = int(input("Ingrese el año: "))
-    if validar_fecha(dia_ida, mes_ida, anio_ida):
-        print("Fecha válida")
-    else:
-        print("Fecha inválida")
+    for i in range(len(datos["destinos"])):
+        while True:
+            dia_s = int(input("Día de salida: "))
+            mes_s = int(input("Mes de salida: "))
+            anio_s = int(input("Año de salida: "))
+            if validar_fecha(dia_s, mes_s, anio_s):
+                datos["salidas"].append(f"{dia_s:02d},{mes_s:02d},{anio_s:04d}")
+                break
+            else:
+                print("Fecha de salida inválida, ingrese nuevamente.")
 
-    dia_vuelta = int(input("Ingrese el día de vuelta: "))
-    mes_vuelta = int(input("Ingrese el mes de vuelta: "))
-    anio_vuelta = int(input("Ingrese el año de vuelta: "))
-    if validar_fecha(dia_vuelta, mes_vuelta, anio_vuelta):
-        print("Fecha válida")
-    else:
-        print("Fecha inválida")
+        while True:
+            dia_l = int(input("Día de llegada: "))
+            mes_l = int(input("Mes de llegada: "))
+            anio_l = int(input("Año de llegada: "))
+            if validar_fecha(dia_l, mes_l, anio_l) and comparar_fechas(f"{dia_s:02d},{mes_s:02d},{anio_s:04d}",
+                                                                       f"{dia_l:02d},{mes_l:02d},{anio_l:04d}"):
+                datos["llegadas"].append(f"{dia_l:02d},{mes_l:02d},{anio_l:04d}")
+                break
+            else:
+                print("Fecha de llegada inválida, debe ser posterior a la de salida.")
 
-    fecha_ida = f"{dia_ida:02d},{mes_ida:02d},{anio_ida:04d}"
-    fecha_vuelta = f"{dia_vuelta:02d},{mes_vuelta:02d},{anio_vuelta:04d}"
-    if comparar_fechas2(fecha_ida, fecha_vuelta) == True:
-        print("Las fechas ingresadas son validas")
-    else:
-        print("Las fechas ingresadas no son validas, vuelva a intentarlo")
+        datos["pasajeros"].append(1)
 
-    matriz = crear_matriz(destinos)
-    matriz = llenar_matriz(matriz, destinos, idmicros, salidas, llegada, pasajeros)
+    matriz = crear_matriz(datos["destinos"])
+    matriz = llenar_matriz(matriz, datos)
     imprimir_matriz(matriz)
     resultados = calcular_ganancias(matriz, precios_establecidos)
     destinos_frecuentes = destino_mas_frecuente(matriz, posibles_destinos)
 
+    print("\n--- RESULTADOS ---")
+    print(f"Ganancia total: ${resultados[0]}")
+    for i in range(len(posibles_destinos)):
+        print(f"{posibles_destinos[i]}: ${resultados[i+1]}")
     print(f"Destinos más frecuentes: {destinos_frecuentes}")
+
 main()
