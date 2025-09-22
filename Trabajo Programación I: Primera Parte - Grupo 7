@@ -264,8 +264,8 @@ def main():
 
     print("\n--- RESULTADOS ---")
     print(f"Ganancia total: ${resultados[0]}")
-    for i in range(len(posibles_destinos)):
-        print(f"{posibles_destinos[i]}: ${resultados[i+1]}")
+    for i, destino in enumerate(posibles_destinos):
+        print(f"{destino}: ${resultados[i+1]}")
     print(f"Destinos más frecuentes: {destinos_frecuentes}")
 
 main()
