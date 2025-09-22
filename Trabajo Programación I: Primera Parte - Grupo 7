@@ -1,10 +1,11 @@
 # Grupo 7---Sistema para gestionar las ventas de pasajes de micro a distintos destinos y en distintas fechas.
 def cargar_lista(destinos_posibles, precios_fijos, datos):
     dni_existentes = set()
-    cant_ventas = int(input("Ingrese la cantidad de pasajes que se vendieron: "))
-    while cant_ventas <= 0:
+    cant_ventas = input("Ingrese la cantidad de pasajes que se vendieron: ").strip()
+    while not cant_ventas.isdigit() or int(cant_ventas) <= 0:
         print("La cantidad de ventas ingresada es inválida. Ingrese nuevamente\n")
-        cant_ventas = int(input("\nIngrese la cantidad de pasajes que se vendieron: "))
+        cant_ventas = input("Ingrese la cantidad de pasajes que se vendieron: ").strip()
+    cant_ventas = int(cant_ventas)
 
     for i in range(cant_ventas):
         dest = input("\nIngrese el lugar de destino del micro: ").strip()
@@ -234,25 +235,33 @@ def main():
 
     for i in range(len(datos["destinos"])):
         while True:
-            dia_s = int(input("Día de salida: "))
-            mes_s = int(input("Mes de salida: "))
-            anio_s = int(input("Año de salida: "))
-            if validar_fecha(dia_s, mes_s, anio_s):
-                datos["salidas"].append(f"{dia_s:02d},{mes_s:02d},{anio_s:04d}")
-                break
+            dia_s = input("Día de salida: ").strip()
+            mes_s = input("Mes de salida: ").strip()
+            anio_s = input("Año de salida: ").strip()
+            
+            if dia_s.isdigit() and mes_s.isdigit() and anio_s.isdigit():
+                dia_s, mes_s, anio_s = int(dia_s), int(mes_s), int(anio_s)
+                fecha_salida_str = f"{dia_s:02d},{mes_s:02d},{anio_s:04d}"
+                if validar_fecha(dia_s, mes_s, anio_s):
+                    datos["salidas"].append(fecha_salida_str)
+                    break
             else:
                 print("Fecha de salida inválida, ingrese nuevamente.")
-
+    
         while True:
-            dia_l = int(input("Día de llegada: "))
-            mes_l = int(input("Mes de llegada: "))
-            anio_l = int(input("Año de llegada: "))
-            if validar_fecha(dia_l, mes_l, anio_l) and comparar_fechas(f"{dia_s:02d},{mes_s:02d},{anio_s:04d}",
-                                                                       f"{dia_l:02d},{mes_l:02d},{anio_l:04d}"):
-                datos["llegadas"].append(f"{dia_l:02d},{mes_l:02d},{anio_l:04d}")
-                break
+            dia_l = input("Día de llegada: ").strip()
+            mes_l = input("Mes de llegada: ").strip()
+            anio_l = input("Año de llegada: ").strip()
+            
+            if dia_l.isdigit() and mes_l.isdigit() and anio_l.isdigit():
+                dia_l, mes_l, anio_l = int(dia_l), int(mes_l), int(anio_l)
+                fecha_llegada_str = f"{dia_l:02d},{mes_l:02d},{anio_l:04d}"
+                fecha_salida_str = datos["salidas"][-1]
+                if validar_fecha(dia_l, mes_l, anio_l) and comparar_fechas(fecha_salida_str, fecha_llegada_str):
+                    datos["llegadas"].append(fecha_llegada_str)
+                    break
             else:
-                print("Fecha de llegada inválida, debe ser posterior a la de salida.")
+                print("Fecha de llegada inválida, debe ser posterior a la de salida. Ingrese nuevamente.")
 
         datos["pasajeros"].append(1)
 
