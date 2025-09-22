@@ -111,6 +111,7 @@ def validar_fecha_formato(d, m, a):
                 return False
     return True
 
+
 def dias_en_mes(m, a):
     if m in [1, 3, 5, 7, 8, 10, 12]:
         return 31
@@ -121,6 +122,7 @@ def dias_en_mes(m, a):
             return 29
         else:
             return 28
+
 
 def sumar_dias(fecha):
     dia, mes, anio = map(int, fecha.split(','))
@@ -148,6 +150,16 @@ def validar_fecha(d, m, a):
     dia_m, mes_m, anio_m = map(int, fecha_maxima.split(','))
     fecha_maxima = (anio_m, mes_m, dia_m)
     return fecha_minima < fecha_ingresada <= fecha_maxima
+
+def comparar_fechas(fecha_ida, fecha_vuelta):
+    dia1, mes1, anio1 = map(int, fecha_ida.split(','))
+    dia2, mes2, anio2 = map(int, fecha_vuelta.split(','))
+    fecha1 = (anio1, mes1, dia1)
+    fecha2 = (anio2, mes2, dia2)
+    if fecha1 < fecha2:
+        return True
+    else:
+        return False
 
 def calcular_ganancias(matriz, precios_establecidos):
     total_de_ganancias = 0
@@ -216,16 +228,32 @@ def main():
         "cant_pasajeros_micro": {},
         "precios_por_destino": {}
     }
-    
-    dia = int(input("Ingrese el día: "))
-    mes = int(input("Ingrese el mes: "))
-    anio = int(input("Ingrese el año: "))
-    if validar_fecha(dia, mes, anio):
+
+    datos = cargar_lista(posibles_destinos, precios_establecidos, datos)
+
+    dia_ida = int(input("Ingrese el día: "))
+    mes_ida = int(input("Ingrese el mes: "))
+    anio_ida = int(input("Ingrese el año: "))
+    if validar_fecha(dia_ida, mes_ida, anio_ida):
         print("Fecha válida")
     else:
         print("Fecha inválida")
-    
-    datos = cargar_lista(posibles_destinos, precios_establecidos, datos)
+
+    dia_vuelta = int(input("Ingrese el día de vuelta: "))
+    mes_vuelta = int(input("Ingrese el mes de vuelta: "))
+    anio_vuelta = int(input("Ingrese el año de vuelta: "))
+    if validar_fecha(dia_vuelta, mes_vuelta, anio_vuelta):
+        print("Fecha válida")
+    else:
+        print("Fecha inválida")
+
+    fecha_ida = f"{dia_ida:02d},{mes_ida:02d},{anio_ida:04d}"
+    fecha_vuelta = f"{dia_vuelta:02d},{mes_vuelta:02d},{anio_vuelta:04d}"
+    if comparar_fechas2(fecha_ida, fecha_vuelta) == True:
+        print("Las fechas ingresadas son validas")
+    else:
+        print("Las fechas ingresadas no son validas, vuelva a intentarlo")
+
     matriz = crear_matriz(destinos)
     matriz = llenar_matriz(matriz, destinos, idmicros, salidas, llegada, pasajeros)
     imprimir_matriz(matriz)
