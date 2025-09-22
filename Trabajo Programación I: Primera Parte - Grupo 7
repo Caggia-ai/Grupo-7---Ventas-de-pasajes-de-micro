@@ -1,5 +1,5 @@
 # Grupo 7---Sistema para gestionar las ventas de pasajes de micro a distintos destinos y en distintas fechas.
-def cargar_lista(destinos_posibles, precios_fijos, lista_dest, lista_cl, lista_micro, lista_precios, cant_pasajeros_micro, precios_por_destino):
+def cargar_lista(destinos_posibles, precios_fijos, datos):
     dni_existentes = set()
     cant_ventas = int(input("Ingrese la cantidad de pasajes que se vendieron: "))
     while cant_ventas <= 0:
@@ -15,30 +15,30 @@ def cargar_lista(destinos_posibles, precios_fijos, lista_dest, lista_cl, lista_m
             if dest.lower() == d.lower():
                 dest = d
                 break
-        lista_dest.append(dest)
+        datos["destinos"].append(dest)
 
         idx = destinos_posibles.index(dest)
         precio = precios_fijos[idx]
-        lista_precios.append(precio)
+        datos["precios"].append(precio)
 
-        precios_por_destino[dest] = precios_por_destino.get(dest, 0) + precio
+        datos["precios_por_destino"][dest] = datos["precios_por_destino"].get(dest, 0) + precio
 
         micro_id = input("\nIngrese el ID del micro: ").strip()
-        while micro_id.isdigit() == False:
+        while not micro_id.isdigit():
             print("El ID del micro ingresado es inválido. Por favor, ingrese nuevamente.")
             micro_id = input("\nIngrese el ID del micro: ").strip()
-        lista_micro.append(micro_id)
+        datos["micros"].append(micro_id)
 
-        cant_pasajeros_micro[micro_id] = cant_pasajeros_micro.get(micro_id, 0) + 1
+        datos["cant_pasajeros_micro"][micro_id] = datos["cant_pasajeros_micro"].get(micro_id, 0) + 1
 
         nombre = input("Ingrese el nombre del pasajero: ").title()
         apellido = input("Ingrese el apellido del pasajero: ").title()
         dni = input("Ingrese el DNI del pasajero: ").strip()
         dni = validar_dni(dni, dni_existentes)
         
-        lista_cl.append([nombre, apellido, dni])
+        datos["clientes"].append([nombre, apellido, dni])
 
-    return lista_dest, lista_cl, lista_micro, lista_precios, cant_pasajeros_micro, precios_por_destino
+    return datos
 
 def validar_dni(dni, dni_existentes):
     while not (dni.isdigit() and 7 <= len(dni) <= 8) or dni in dni_existentes:
@@ -208,12 +208,14 @@ def main():
     posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gesell", "Mar del Plata", "Miramar", "Necochea"]
     precios_establecidos = [15000, 20000, 30000, 35000, 40000, 45000]
     
-    lista_destinos = []
-    lista_clientes = []
-    lista_micros = []
-    lista_precios = []
-    cant_pasajeros_micro = {}
-    precios_por_destino = {}
+    datos = {
+        "destinos": [],
+        "clientes": [],
+        "micros": [],
+        "precios": [],
+        "cant_pasajeros_micro": {},
+        "precios_por_destino": {}
+    }
     
     dia = int(input("Ingrese el día: "))
     mes = int(input("Ingrese el mes: "))
@@ -223,9 +225,7 @@ def main():
     else:
         print("Fecha inválida")
     
-    lista_destinos, lista_clientes, lista_micros, lista_precios, cant_pasajeros_micro, precios_por_destino = cargar_lista(
-        posibles_destinos, precios_establecidos, lista_destinos, lista_clientes, lista_micros, lista_precios, cant_pasajeros_micro, precios_por_destino
-    )
+    datos = cargar_lista(posibles_destinos, precios_establecidos, datos)
     matriz = crear_matriz(destinos)
     matriz = llenar_matriz(matriz, destinos, idmicros, salidas, llegada, pasajeros)
     imprimir_matriz(matriz)
