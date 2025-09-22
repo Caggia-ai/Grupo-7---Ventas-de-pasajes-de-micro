@@ -51,7 +51,7 @@ def validar_dni(dni, dni_existentes):
     return dni
 
 # Programa principal
-posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gessell", "Mar del Plata", "Miramar", "Necochea"]
+posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gesell", "Mar del Plata", "Miramar", "Necochea"]
 precios_establecidos = [15000, 20000, 30000, 35000, 40000, 45000]
 
 lista_destinos = []
