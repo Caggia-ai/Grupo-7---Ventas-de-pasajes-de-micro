@@ -50,7 +50,7 @@ def validar_dni(dni, dni_existentes):
     dni_existentes.add(dni)
     return dni
 
-def crear_matriz(datos["destinos"]):
+def crear_matriz(ldestino):
     filas = 5
     columnas = len(ldestino)
     matriz = [[0]*columnas for i in range(filas)]
