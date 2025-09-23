@@ -2,16 +2,19 @@
 
 def cargar_lista(destinos_posibles, precios_fijos, datos):
     dni_existentes = set()
-    cant_ventas = input("Ingrese la cantidad de pasajes que se vendieron: ").strip()
+    cant_ventas = input("Ingrese la cantidad de pasajes vendidos: ").strip()
     while not cant_ventas.isdigit() or int(cant_ventas) <= 0:
-        print("Cantidad de ventas inválida. Ingrese nuevamente.")
-        cant_ventas = input("Ingrese la cantidad de pasajes que se vendieron: ").strip()
+        print("El valor ingresado es invalido, por favor vuelva a intentarlo.")
+        cant_ventas = input("Ingrese la cantidad de pasajes vendidos: ").strip()
     cant_ventas = int(cant_ventas)
 
     for i in range(cant_ventas):
+        print(f"\n--- Destinos Disponibles ---")
+        for destino in destinos_posibles:
+            print(destino)
         dest = input("\nIngrese el lugar de destino del micro: ").strip()
         while dest.lower() not in [d.lower() for d in destinos_posibles]:
-            print("Destino inválido. Debe elegir uno disponible.")
+            print("Destino no encontrado, por favor elija uno de los destinos disponibles.")
             dest = input("Ingrese nuevamente el lugar de destino: ").strip()
         for d in destinos_posibles:
             if dest.lower() == d.lower():
@@ -34,7 +37,9 @@ def cargar_lista(destinos_posibles, precios_fijos, datos):
         datos["cant_pasajeros_micro"][micro_id] = datos["cant_pasajeros_micro"].get(micro_id, 0) + 1
 
         nombre = input("Ingrese el nombre del pasajero: ").title()
+        nombre = validar_nombre(nombre)
         apellido = input("Ingrese el apellido del pasajero: ").title()
+        apellido = validar_apellido(apellido)
         dni = input("Ingrese el DNI del pasajero: ").strip()
         dni = validar_dni(dni, dni_existentes)
         
@@ -42,12 +47,24 @@ def cargar_lista(destinos_posibles, precios_fijos, datos):
 
     return datos
 
+def validar_nombre(nombre):
+    while not nombre.replace(" ", "").isalpha():
+        print("El nombre ingresado no es valido, por favor intentelo nuevamente")
+        nombre = input("Ingrese el nombre del pasajero: ").title()
+    return nombre 
+
+def validar_apellido(apellido):
+    while not apellido.replace(" ", "").isalpha():
+        print("El apellido ingresado no es valido, por favor intentelo nuevamente")
+        apellido = input("Ingrese el apellido del pasajero: ").title()
+    return apellido
+
 def validar_dni(dni, dni_existentes):
     while not (dni.isdigit() and 7 <= len(dni) <= 8) or dni in dni_existentes:
         if not dni.isdigit() or not (7 <= len(dni) <= 8):
-            print("El DNI ingresado es inválido. Ingrese nuevamente.")
+            print("El DNI ingresado es inválido, por favor intentelo nuevamente.")
         else:
-            print("Este DNI ya fue ingresado. Ingrese uno diferente.")
+            print("Este DNI ya fue registrado. Ingrese uno diferente.")
         dni = input("Ingrese el DNI del pasajero: ").strip()
     dni_existentes.add(dni)
     return dni
@@ -78,20 +95,11 @@ def llenar_matriz(matriz, datos):
 def imprimir_matriz(matriz):
     filas = len(matriz)
     columnas = len(matriz[0])
-    for i in range(filas):
-        if i==0:
-            print("\nDestino: ", end=" ")
-        elif i==1:
-            print("\nId del micro: ", end=" ")
-        elif i==2:
-            print("\nFecha de salida: ", end=" ")
-        elif i==3:
-            print("\nFecha de llegada: ", end=" ")
-        else:
-            print("\nCant. de pasajeros: ", end=" ")
-        for j in range(columnas):
-            print(matriz[i][j], end=" ")
-        print()
+    datos = ["Destino", "Id del micro", "Fecha de salida", "Fecha de llegada", "Cant. de pasajeros"]
+    for j in range(columnas):
+        print(f"\n--- Viaje {j + 1} ---")
+        for i in range(filas):
+            print(f"{datos[i]}: {matriz[i][j]}")
 
 def validar_fecha_formato(d, m, a):
     if not (1 <= m <= 12):
