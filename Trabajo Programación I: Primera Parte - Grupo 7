@@ -18,6 +18,7 @@ def cargar_pasaje(destinos_posibles, precios_fijos, datos):
             if dest == 7:
                 print("Saliendo...")
                 break
+            # Falta que pueda entrar y salir de la función libremente
             else:
                 destino = destinos_posibles[dest - 1]
                 datos["destinos"].append(destino)
@@ -283,6 +284,7 @@ def main():
             datos["pasajeros"].append(1)
 
         elif menu == 2:
+        # Todavía no funciona
             if not datos["clientes"]:
                 print("No hay pasajes cargados para modificar.")
             else:
@@ -325,6 +327,7 @@ def main():
                     print("Opción inválida. No se eliminaron registros.")
 
         elif menu == 4:
+        # Todavía no funciona
             if not datos["destinos"]:
                 print("No hay datos para mostrar.")
             else:
