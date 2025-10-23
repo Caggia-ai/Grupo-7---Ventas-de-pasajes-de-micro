@@ -1,49 +1,51 @@
 # Grupo 7---Sistema para gestionar las ventas de pasajes de micro a distintos destinos y en distintas fechas.
 
-def cargar_lista(destinos_posibles, precios_fijos, datos):
+def cargar_pasaje(destinos_posibles, precios_fijos, datos):
     dni_existentes = set()
-    cant_ventas = input("Ingrese la cantidad de pasajes vendidos: ").strip()
-    while not cant_ventas.isdigit() or int(cant_ventas) <= 0:
-        print("El valor ingresado es invalido, por favor vuelva a intentarlo.")
-        cant_ventas = input("Ingrese la cantidad de pasajes vendidos: ").strip()
-    cant_ventas = int(cant_ventas)
-
-    for i in range(cant_ventas):
-        print(f"\n--- Destinos Disponibles ---")
-        for destino in destinos_posibles:
-            print(destino)
-        dest = input("\nIngrese el lugar de destino del micro: ").strip()
-        while dest.lower() not in [d.lower() for d in destinos_posibles]:
-            print("Destino no encontrado, por favor elija uno de los destinos disponibles.")
-            dest = input("Ingrese nuevamente el lugar de destino: ").strip()
-        for d in destinos_posibles:
-            if dest.lower() == d.lower():
-                dest = d
+    print("\n--- Destinos Disponibles ---")
+    mensaje =  """1. Mar de Ajó
+2. Pinamar
+3. Villa Gesell
+4. Mar del Plata
+5. Miramar
+6. Necochea
+7. Salir"""
+    print(mensaje)
+    while True:
+        try:
+            dest = int(input("\nElija su destino: ").strip())
+            assert 1 <= dest <= 7
+            if dest == 7:
+                print("Saliendo...")
                 break
-        datos["destinos"].append(dest)
+            else:
+                destino = destinos_posibles[dest - 1]
+                datos["destinos"].append(destino)
+                precio = precios_fijos[dest - 1]
+                datos["precios"].append(precio)
+                print(f"\nHas elegido {destino}. Precio: ${precio}")
+                datos["precios_por_destino"][dest] = datos["precios_por_destino"].get(dest, 0) + precio
+                break
+        except ValueError:
+            print("La opción ingresada no es válida.")
+        except AssertionError:
+            print("Elija una de las opciones posibles (1 a 7).")
+    micro_id = input("\nIngrese el ID del micro: ").strip()
+    while not micro_id.isdigit():
+        print("El ID del micro ingresado es inválido. Ingrese nuevamente.")
+        micro_id = input("Ingrese el ID del micro: ").strip()
+    datos["micros"].append(micro_id)
 
-        idx = destinos_posibles.index(dest)
-        precio = precios_fijos[idx]
-        datos["precios"].append(precio)
-
-        datos["precios_por_destino"][dest] = datos["precios_por_destino"].get(dest, 0) + precio
-
-        micro_id = input("\nIngrese el ID del micro: ").strip()
-        while not micro_id.isdigit():
-            print("El ID del micro ingresado es inválido. Ingrese nuevamente.")
-            micro_id = input("Ingrese el ID del micro: ").strip()
-        datos["micros"].append(micro_id)
-
-        datos["cant_pasajeros_micro"][micro_id] = datos["cant_pasajeros_micro"].get(micro_id, 0) + 1
-
-        nombre = input("Ingrese el nombre del pasajero: ").title()
-        nombre = validar_nombre(nombre)
-        apellido = input("Ingrese el apellido del pasajero: ").title()
-        apellido = validar_apellido(apellido)
-        dni = input("Ingrese el DNI del pasajero: ").strip()
-        dni = validar_dni(dni, dni_existentes)
+    datos["cant_pasajeros_micro"][micro_id] = datos["cant_pasajeros_micro"].get(micro_id, 0) + 1
+## fijarse que no se suman la cantidad de pasajeros segun el id ingresado
+    nombre = input("Ingrese el nombre del pasajero: ").title()
+    nombre = validar_nombre(nombre)
+    apellido = input("Ingrese el apellido del pasajero: ").title()
+    apellido = validar_apellido(apellido)
+    dni = input("Ingrese el DNI del pasajero: ").strip()
+    dni = validar_dni(dni, dni_existentes)
         
-        datos["clientes"].append([nombre, apellido, dni])
+    datos["clientes"].append([nombre, apellido, dni])
 
     return datos
 
@@ -218,10 +220,11 @@ def destino_mas_frecuente(matriz, posibles_destinos):
     for i, cantidad in enumerate(destinos):
         if cantidad == max_frecuencia:
             destinos_mas_frecuentes.append(posibles_destinos[i])
-
     return destinos_mas_frecuentes
 
 def main():
+    mensaje_base = """¡BIENVENIDOS!"""
+    print(mensaje_base)
     posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gesell", "Mar del Plata", "Miramar", "Necochea"]
     precios_establecidos = [15000, 20000, 30000, 35000, 40000, 45000]
     
@@ -231,52 +234,114 @@ def main():
         "cant_pasajeros_micro": {}, "precios_por_destino": {},
     }
 
-    datos = cargar_lista(posibles_destinos, precios_establecidos, datos)
-
-    for i, micro in enumerate(datos["micros"]):
-        if i < len(datos["salidas"]) and datos["micros"][i] == micro:
-            continue
-
+    while True:
         while True:
-            dia_s = input(f"\nDía de salida del micro {micro}: ").strip()
-            mes_s = input("Mes de salida: ").strip()
-            anio_s = input("Año de salida: ").strip()
-            
-            if dia_s.isdigit() and mes_s.isdigit() and anio_s.isdigit():
-                dia_s, mes_s, anio_s = int(dia_s), int(mes_s), int(anio_s)
-                fecha_salida_str = f"{dia_s:02d},{mes_s:02d},{anio_s:04d}"
-                if validar_fecha(dia_s, mes_s, anio_s):
-                    break
-            print("Fecha de salida inválida. Ingrese nuevamente.")
+            try:
+                print("""\n--- MENÚ PRINCIPAL ---
+1. Agregar pasaje
+2. Cambiar destino
+3. Eliminar pasaje
+4. Mostrar estado de la matriz
+5. Salir\n""")
+                menu = int(input("OPCIÓN? "))
+                assert 1 <= menu <= 5
+                break
+            except ValueError:
+                print("No exista la opción seleccionada.")
+            except AssertionError:
+                print("Elija una de las opciones posibles.\n")
 
-        while True:
-            dia_l = input(f"\nDía de llegada del micro {micro}: ").strip()
-            mes_l = input("Mes de llegada: ").strip()
-            anio_l = input("Año de llegada: ").strip()
-            
-            if dia_l.isdigit() and mes_l.isdigit() and anio_l.isdigit():
-                dia_l, mes_l, anio_l = int(dia_l), int(mes_l), int(anio_l)
-                fecha_llegada_str = f"{dia_l:02d},{mes_l:02d},{anio_l:04d}"
-                if validar_fecha(dia_l, mes_l, anio_l) and comparar_fechas(fecha_salida_str, fecha_llegada_str):
-                    break
-            print("Fecha de llegada inválida. Debe ser posterior a la de salida. Ingrese nuevamente.")
+        if menu == 1:
+            datos = cargar_pasaje(posibles_destinos, precios_establecidos, datos)
+            micro = datos["micros"][-1]
+            while True:
+                dia_s = input(f"\nDía de salida del micro {micro}: ").strip()
+                mes_s = input("Mes de salida: ").strip()
+                anio_s = input("Año de salida: ").strip()
+                
+                if dia_s.isdigit() and mes_s.isdigit() and anio_s.isdigit():
+                    dia_s, mes_s, anio_s = int(dia_s), int(mes_s), int(anio_s)
+                    fecha_salida_str = f"{dia_s:02d},{mes_s:02d},{anio_s:04d}"
+                    if validar_fecha(dia_s, mes_s, anio_s):
+                        break
+                print("Fecha de salida inválida. Ingrese nuevamente.")
 
-        for j in range(len(datos["micros"])):
-            if datos["micros"][j] == micro:
-                datos["salidas"].append(fecha_salida_str)
-                datos["llegadas"].append(fecha_llegada_str)
-                datos["pasajeros"].append(1)
+            while True:
+                dia_l = input(f"\nDía de llegada del micro {micro}: ").strip()
+                mes_l = input("Mes de llegada: ").strip()
+                anio_l = input("Año de llegada: ").strip()
+                
+                if dia_l.isdigit() and mes_l.isdigit() and anio_l.isdigit():
+                    dia_l, mes_l, anio_l = int(dia_l), int(mes_l), int(anio_l)
+                    fecha_llegada_str = f"{dia_l:02d},{mes_l:02d},{anio_l:04d}"
+                    if validar_fecha(dia_l, mes_l, anio_l) and comparar_fechas(fecha_salida_str, fecha_llegada_str):
+                        break
+                print("Fecha de llegada inválida. Debe ser posterior a la de salida. Ingrese nuevamente.")
 
-    matriz = crear_matriz(datos["destinos"])
-    matriz = llenar_matriz(matriz, datos)
-    imprimir_matriz(matriz)
-    resultados = calcular_ganancias(matriz, precios_establecidos)
-    destinos_frecuentes = destino_mas_frecuente(matriz, posibles_destinos)
+            datos["salidas"].append(fecha_salida_str)
+            datos["llegadas"].append(fecha_llegada_str)
+            datos["pasajeros"].append(1)
 
-    print("\n--- RESULTADOS ---")
-    print(f"Ganancia total: ${resultados[0]}")
-    for i, destino in enumerate(posibles_destinos):
-        print(f"{destino}: ${resultados[i+1]}")
-    print(f"Destinos más frecuentes: {destinos_frecuentes}")
+        elif menu == 2:
+            if not datos["clientes"]:
+                print("No hay pasajes cargados para modificar.")
+            else:
+                print("\n--- Pasajes cargados ---")
+                for i, c in enumerate(datos["clientes"]):
+                    print(f"{i+1}. {c[0]} {c[1]} - DNI: {c[2]} - Destino: {datos['destinos'][i]}")
+                try:
+                    indice = int(input("Seleccione el número de pasaje a modificar: ")) - 1
+                    assert 0 <= indice < len(datos["clientes"])
+                    print("\n--- Nuevos destinos posibles ---")
+                    for j, d in enumerate(posibles_destinos, 1):
+                        print(f"{j}. {d}")
+                    nuevo_dest = int(input("Ingrese el nuevo destino: "))
+                    assert 1 <= nuevo_dest <= 6
+                    datos["destinos"][indice] = posibles_destinos[nuevo_dest - 1]
+                    datos["precios"][indice] = precios_establecidos[nuevo_dest - 1]
+                    print("Destino modificado correctamente.")
+                except (ValueError, AssertionError):
+                    print("Opción inválida. No se realizaron cambios.")
 
+        elif menu == 3:
+            if not datos["clientes"]:
+                print("No hay pasajes cargados para eliminar.")
+            else:
+                print("\n--- Pasajes cargados ---")
+                for i, c in enumerate(datos["clientes"]):
+                    print(f"{i+1}. {c[0]} {c[1]} - DNI: {c[2]} - Destino: {datos['destinos'][i]}")
+                try:
+                    indice = int(input("Seleccione el número de pasaje a eliminar: ")) - 1
+                    assert 0 <= indice < len(datos["clientes"])
+                    eliminado = datos["clientes"].pop(indice)
+                    datos["destinos"].pop(indice)
+                    datos["micros"].pop(indice)
+                    datos["precios"].pop(indice)
+                    datos["salidas"].pop(indice)
+                    datos["llegadas"].pop(indice)
+                    datos["pasajeros"].pop(indice)
+                    print(f"Pasaje de {eliminado[0]} {eliminado[1]} eliminado correctamente.")
+                except (ValueError, AssertionError):
+                    print("Opción inválida. No se eliminaron registros.")
+
+        elif menu == 4:
+            if not datos["destinos"]:
+                print("No hay datos para mostrar.")
+            else:
+                matriz = crear_matriz(datos["destinos"])
+                matriz = llenar_matriz(matriz, datos)
+                imprimir_matriz(matriz)
+
+        elif menu == 5:
+            print("Cerrando programa...")
+            matriz = crear_matriz(datos["destinos"])
+            matriz = llenar_matriz(matriz, datos)
+            resultados = calcular_ganancias(matriz, precios_establecidos)
+            destinos_frecuentes = destino_mas_frecuente(matriz, posibles_destinos)
+            print("\n--- RESULTADOS FINALES ---")
+            print(f"Ganancia total: ${resultados[0]}")
+            for i, destino in enumerate(posibles_destinos):
+                print(f"{destino}: ${resultados[i+1]}")
+            print(f"Destinos más frecuentes: {', '.join(destinos_frecuentes)}")
+            break
 main()
