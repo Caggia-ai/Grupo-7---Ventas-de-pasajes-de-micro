@@ -1,1 +1,106 @@
+def cargar_pasajero(lista_clientes):
+    user_id = input("Ingrese el ID del usuario: ").strip()
+    dni = input("Ingrese el DNI: ").strip()
+    nombre = input("Ingrese el nombre del pasajero: ").title()
+    apellido = input("Ingrese el apellido del pasajero: ").title()
+    lista_clientes.append([user_id, dni, nombre, apellido])
+    return lista_clientes
 
+def elegir_destino(lista_destinos):
+    print("\n==============================")
+    print("     DESTINOS DISPONIBLES     ")
+    print("==============================")
+    mensaje = (
+        "1. Mar de Ajó\n"
+        "2. Pinamar\n"
+        "3. Villa Gesell\n"
+        "4. Mar del Plata\n"
+        "5. Miramar\n"
+        "6. Necochea\n"
+        "7. Salir"
+    )
+    print(mensaje)
+    
+    while True:
+        try:
+            dest = int(input("\nElija su destino: ").strip())
+            assert 1 <= dest <= 7
+            break
+        except ValueError:
+            print("La opción ingresada no es válida. Intente nuevamente.")
+        except AssertionError:
+            print("Elija una de las opciones posibles (1 a 7).")
+    
+    if dest == 7:
+        print("Saliendo...")
+        return None
+    
+    destino_elegido = lista_destinos[dest - 1]
+    print(f"\nDestino seleccionado: {destino_elegido}")
+    return destino_elegido
+
+def registrar_micro(lista_micros):
+    id_micro = ("Ingrese el ID del micro correspondiente: ")
+
+    if id_micro in lista_micros:
+        print(f"El micro con ID {id_micro} ya está registrado.")
+    else:
+        lista_micros.append(id_micro)
+        print(f"Micro {id_micro} cargado correctamente.")
+    return id_micro
+
+def asociar_precio(posibles_destinos, precios_establecidos, lista_destinos):
+    if destino not in lista_destinos:
+        print("El destino no existe en la lista de opciones.")
+        return None
+    indice = lista_destinos.index(destino)
+    precio = precios_establecidos[indice]
+    print(f"El precio del pasaje a {destino} es de ${precio}.")
+    return precio
+
+def main():
+    mensaje_base = """¡BIENVENIDOS!"""
+    print(mensaje_base)
+    posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gesell", "Mar del Plata", "Miramar", "Necochea"]
+    precios_establecidos = [15000, 20000, 30000, 35000, 40000, 45000]
+    clientes = []
+    destinos = []
+    micros = []
+    precios = []
+    fecha_salidas = []
+    pasajeros = []
+    cant_pasajeros_micro = {}
+    precios_por_destino = {}
+
+    while True:
+        while True:
+            try:
+                print("\n==============================")
+                print("        MENÚ PRINCIPAL        ")
+                print("==============================")
+                print("1. Agregar pasaje")
+                print("2. Cambiar destino")
+                print("3. Eliminar pasaje")
+                print("4. Mostrar estado de la matriz")
+                print("5. Salir")
+                print("==============================")
+
+                menu = int(input("Seleccione una opción: ").strip())
+                assert 1 <= menu <= 5
+                break
+            except ValueError:
+                print("La opción ingresada no es válida.")
+            except AssertionError:
+                print("Elija una de las opciones posibles (1 a 5).\n")
+        if menu == 1:
+            clientes = cargar_pasajero(clientes)
+            destino = elegir_destino(posibles_destinos)
+        if destino:
+            destinos.append(destino)
+            id_micro = registrar_micro(micros)
+            precio = asociar_precio(destino, posibles_destinos, precios_establecidos)
+            if precio:
+                precios.append(precio)
+            
+if __name__ == "__main__":
+    main()                
