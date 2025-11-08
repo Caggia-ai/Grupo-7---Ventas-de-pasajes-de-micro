@@ -101,6 +101,4 @@ def main():
             precio = asociar_precio(destino, posibles_destinos, precios_establecidos)
             if precio:
                 precios.append(precio)
-            
-if __name__ == "__main__":
-    main()                
+main()                
