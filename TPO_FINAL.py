@@ -131,22 +131,17 @@ def elegir_micro(lista_destinos):
     while True:
         try:
             dest = int(input("\nElija su destino: ").strip())
-            assert 1 <= dest <= 7
+            assert 1 <= dest <= 7, "Elija una de las opciones posibles (1 a 7)." 
+            assert destino in lista_destinos, "Destino no válido"
             break
         except ValueError:
             print("La opción ingresada no es válida. Intente nuevamente.")
-        except AssertionError:
-            print("Elija una de las opciones posibles (1 a 7).")
+        except AssertionError as mensaje:
+            print(mensaje)
     
     if dest == 7:
         print("Saliendo...")
         return None
-        
-    try:
-        assert destino in destinos, "Destino no valido"
-        break
-    except AssertionError as mensaje:
-        print(mensaje)
 
 #esta funcion me la paso chatgpt, esta dejenla que la corrijo yo, hay que validar algunas cosas un poco mejor
 #preferiblemente el programa deberia mostrar las fechas disponibles para el destino que elija el usario
@@ -371,3 +366,4 @@ def main():
             print("La opción ingresada es inexistente, intente nuevamente \n\n")
 
 main()
+
