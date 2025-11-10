@@ -112,18 +112,41 @@ def validar_registrar_pasajero():
 #en teoria las paginas de pasajes no cargan los datos de los micros, si no que los reciben y de x lado y ahi ya tienen 
 #la info sobre horarios, destinos, osea vienen de las empresas asi que no tenemos porque modificarlos, mejor que vengan
 #precargados
-def elegir_micro():
-    destinos = ["mar del plata","pinamar","mar de ajo"]
+def elegir_micro(lista_destinos):
+    
+    print("="*100)
+    print("DESTINOS DISPONIBLES".center(100))
+    print("="*100)
+    mensaje = (
+        "1. Mar de Ajó\n"
+        "2. Pinamar\n"
+        "3. Villa Gesell\n"
+        "4. Mar del Plata\n"
+        "5. Miramar\n"
+        "6. Necochea\n"
+        "7. Salir"
+    )
+    print(mensaje)
     
     while True:
-        #hay que arreglar esto, en realidad deberia ser un menu con opciones, ya nos habia criticado esto thompson
-        destino = input("DESTINO: (mar del plata/pinamar/mar de ajo): ")
-
         try:
-            assert destino in destinos, "Destino no valido"
+            dest = int(input("\nElija su destino: ").strip())
+            assert 1 <= dest <= 7
             break
-        except AssertionError as mensaje:
-            print(mensaje)
+        except ValueError:
+            print("La opción ingresada no es válida. Intente nuevamente.")
+        except AssertionError:
+            print("Elija una de las opciones posibles (1 a 7).")
+    
+    if dest == 7:
+        print("Saliendo...")
+        return None
+        
+    try:
+        assert destino in destinos, "Destino no valido"
+        break
+    except AssertionError as mensaje:
+        print(mensaje)
 
 #esta funcion me la paso chatgpt, esta dejenla que la corrijo yo, hay que validar algunas cosas un poco mejor
 #preferiblemente el programa deberia mostrar las fechas disponibles para el destino que elija el usario
@@ -190,7 +213,7 @@ def elegir_micro():
     return micro_encontrado
 
 
-def eligir_asiento(micro):
+def elegir_asiento(micro):
     id_micro = micro["id_micro"]
     cant_asientos = micro["cant_asientos"]
 
@@ -314,6 +337,8 @@ def main():
     print("5. Salir")
     print("="*100)
 
+    destinos = ["Mar de Ajó", "Pinamar", "Villa Gesell", "Mar del Plata", "Miramar", "Necochea"]
+
     while True:
         try:
             opcion = int(input("Elija la operacion a realizar, por favor: \n"))
@@ -338,11 +363,11 @@ def main():
 
             elif opcion == 5:
                 print("SALIENDO DE VENTAS DE PASAJES, GRACIAS POR SU VISITA... \n")
-
                 break
 
         except ValueError: 
             print("Opcion invalida, intente nuevamente \n\n")
         except AssertionError:
-            print("Opcion invalida, intente nuevamente \n\n")
+            print("La opción ingresada es inexistente, intente nuevamente \n\n")
+
 main()
