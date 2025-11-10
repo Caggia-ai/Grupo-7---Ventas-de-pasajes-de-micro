@@ -131,13 +131,12 @@ def elegir_micro(lista_destinos):
     while True:
         try:
             dest = int(input("\nElija su destino: ").strip())
-            assert 1 <= dest <= 7, "Elija una de las opciones posibles (1 a 7)." 
-            assert destino in lista_destinos, "Destino no válido"
+            assert 1 <= dest <= 7
             break
         except ValueError:
             print("La opción ingresada no es válida. Intente nuevamente.")
-        except AssertionError as mensaje:
-            print(mensaje)
+        except AssertionError:
+            print("Elija una de las opciones posibles (1 a 7).")
     
     if dest == 7:
         print("Saliendo...")
@@ -164,9 +163,6 @@ def elegir_micro(lista_destinos):
 
         except AssertionError as mensaje:
             print("ERROR: ",mensaje)
-
-#no estoy seguro de esta variable que me dio chatgpt, hay que revisarla
-    destino_csv = destino.title()
 
     micro_encontrado = None
 
@@ -366,4 +362,5 @@ def main():
             print("La opción ingresada es inexistente, intente nuevamente \n\n")
 
 main()
+
 
