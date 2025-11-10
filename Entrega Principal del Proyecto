@@ -1,10 +1,24 @@
+from datetime import date
+
 def cargar_pasajero(lista_clientes):
-    user_id = input("Ingrese el ID del usuario: ").strip()
-    dni = input("Ingrese el DNI: ").strip()
-    nombre = input("Ingrese el nombre del pasajero: ").title()
-    apellido = input("Ingrese el apellido del pasajero: ").title()
-    lista_clientes.append([user_id, dni, nombre, apellido])
+    while True:
+        try:
+            user_id = input("Ingrese el ID del usuario: ").strip()
+            dni = input("Ingrese el DNI: ").strip()
+            assert dni.isdigit(), "El DNI solo debe contener números"
+            largo = len(dni)
+            assert largo == 7 or largo == 8, "DNI inválido"
+            nombre = input("Ingrese el nombre del pasajero: ").title()
+            assert nombre.isalpha(), "El nombre ingresado es inválido"
+            apellido = input("Ingrese el apellido del pasajero: ").title()
+            assert nombre.isalpha(), "El apellido ingresado es inválido"
+            lista_clientes.append([user_id, dni, nombre, apellido])
+            break
+        except AssertionError as mensaje:
+            print(mensaje)
+            
     return lista_clientes
+
 
 def elegir_destino(lista_destinos):
     print("\n==============================")
@@ -39,36 +53,42 @@ def elegir_destino(lista_destinos):
     print(f"\nDestino seleccionado: {destino_elegido}")
     return destino_elegido
 
+
 def registrar_micro(lista_micros):
-    id_micro = ("Ingrese el ID del micro correspondiente: ")
-
-    if id_micro in lista_micros:
-        print(f"El micro con ID {id_micro} ya está registrado.")
-    else:
-        lista_micros.append(id_micro)
-        print(f"Micro {id_micro} cargado correctamente.")
+    while True:
+        try:
+            id_micro = input("Ingrese el ID del micro correspondiente: ").strip()
+            assert id_micro.isdigit(), "EL ID del micro ingresado no es válido"
+            assert id_micro not in lista_micros, "Micro ya registrado. Ingrese nuevamente"
+            lista_micros.append(id_micro)
+            print(f"Micro {id_micro} cargado correctamente.")
+            break
+        except AssertionError as mensaje:
+            print(mensaje)
+            
     return id_micro
-
-def asociar_precio(posibles_destinos, precios_establecidos, lista_destinos):
-    if destino not in lista_destinos:
+    
+def asociar_precio(destino, lista_destinos, precios_establecidos):
+    try:
+        indice = lista_destinos.index(destino)
+        precio = precios_establecidos[indice]
+        print(f"El precio del pasaje a {destino} es de ${precio}.")
+        return precio
+    except IndexError:
         print("El destino no existe en la lista de opciones.")
         return None
-    indice = lista_destinos.index(destino)
-    precio = precios_establecidos[indice]
-    print(f"El precio del pasaje a {destino} es de ${precio}.")
-    return precio
 
 def main():
-    mensaje_base = """¡BIENVENIDOS!"""
-    print(mensaje_base)
+    print("¡BIENVENIDOS!")
+
     posibles_destinos = ["Mar de Ajó", "Pinamar", "Villa Gesell", "Mar del Plata", "Miramar", "Necochea"]
     precios_establecidos = [15000, 20000, 30000, 35000, 40000, 45000]
+
     clientes = []
     destinos = []
     micros = []
     precios = []
     fecha_salidas = []
-    pasajeros = []
     cant_pasajeros_micro = {}
     precios_por_destino = {}
 
@@ -81,7 +101,7 @@ def main():
                 print("1. Agregar pasaje")
                 print("2. Cambiar destino")
                 print("3. Eliminar pasaje")
-                print("4. Mostrar estado de la matriz")
+                print("4. Mostrar Tabla de ganancias")
                 print("5. Salir")
                 print("==============================")
 
@@ -91,14 +111,40 @@ def main():
             except ValueError:
                 print("La opción ingresada no es válida.")
             except AssertionError:
-                print("Elija una de las opciones posibles (1 a 5).\n")
+                print("Elija una opción válida (1 a 5).")
+
         if menu == 1:
-            clientes = cargar_pasajero(clientes)
-            destino = elegir_destino(posibles_destinos)
-        if destino:
-            destinos.append(destino)
-            id_micro = registrar_micro(micros)
-            precio = asociar_precio(destino, posibles_destinos, precios_establecidos)
-            if precio:
+            try:
+                clientes = cargar_pasajero(clientes)
+                destino = elegir_destino(posibles_destinos)
+                id_micro = registrar_micro(micros)
+                precio = asociar_precio(destino, posibles_destinos, precios_establecidos)
+
+                assert destino != None and precio != None
+
+                destinos.append(destino)
                 precios.append(precio)
-main()                
+
+                print("\nEl pasaje se ha cargado correctamente.\n")
+
+            except AssertionError:
+                print("No se registró ningún pasaje (datos incompletos o cancelados).")
+
+        elif menu == 2:
+            print("Funcionalidad de cambio de destino aún no implementada.")
+            pass
+
+        elif menu == 3:
+            print("Funcionalidad de eliminación aún no implementada.")
+            pass
+
+        elif menu == 4:
+            print("\n=== ESTADO ACTUAL ===")
+            for i, cliente in enumerate(clientes):
+                print(f"{i+1}. {cliente[2]} {cliente[3]} - {destinos[i]} - ${precios[i]}")
+
+        elif menu == 5:
+            print("Saliendo del programa...")
+            break
+
+main()
