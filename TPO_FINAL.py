@@ -358,7 +358,7 @@ def cargar_pasaje():
         except Exception as mensaje:
             print(mensaje)
         
-    micros_disponibles: []
+    micros_disponibles = []
 
     try:
         arch = open("micros.csv", "r")
@@ -499,4 +499,5 @@ def main():
             print("Opcion invalida, intente nuevamente \n\n")
         except AssertionError:
             print("Opcion invalida, intente nuevamente \n\n")
+
 main()
