@@ -164,7 +164,7 @@ def elegir_micro():
             pass
     
     if micro_encontrado is None:
-        print("No se encontraron coincidencias")
+        print("No se hallaron coincidencias")
         return None
     
     print("Coincidencia encontrada")
@@ -321,7 +321,7 @@ def cargar_pasaje():
 
     if not encontrado:
         #podriamos agregar una opcion por si el pasajero no quiere registrarse
-        print("Pasajero NO registrado.\n")
+        print("Pasajero no registrado.\n")
         nombre = input("Nombre del Pasajero: ").strip()
         apellido = input("Apellido del Pasajero: ").strip()
 
@@ -368,15 +368,14 @@ def cargar_pasaje():
             if fila[2] == destino:
                 micros_disponibles.append({
                     "id_micro": fila[0],
-                    "fecha": fila[1]
-                    "destino": fila[2]
+                    "fecha": fila[1],
+                    "destino": fila[2],
                     "asientos": int(fila[3])
                 })
             
     except FileNotFoundError:
         print("")
         return
-#me parece que aca deberia ir un return none, pero hay que revisar
 
     finally:
         try:
@@ -385,9 +384,8 @@ def cargar_pasaje():
             pass
 
     if len(micros_disponibles) == 0:
-        print("No se encontraron coincidencias para el destino seleccionado\n")
+        print("No se hallaron coincidencias para el destino seleccionado\n")
         return
-#creo que aca tambien deberia ser return none
 
     print("\nMicros disponibles: ")
     for i, m in enumerate(micros_disponibles, 1):
@@ -457,6 +455,152 @@ def cargar_pasaje():
     print("PASAJE REGISTRADO EXITOSAMENTE".center(100))
 
 
+def eliminar_pasaje():
+    print("="*100)
+    print("CANCELAR PASAJE".center(100))
+    print("="*100)
+
+    while True:
+        try:
+            id_buscar = input("ID del pasaje: \n").strip()
+            assert id_buscar.isdigit(), "El ID ingresado no es valido"
+            break
+
+        except AssertionError as mensaje:
+            print(mensaje)
+
+    id_buscar = int(id_buscar)
+
+    lineas_filtradas = []
+    encontrado = False
+
+    try: 
+        arch = open("pasajes.csv","r")
+        encabezado = arch.readline()
+        lineas_filtradas.append(encabezado)
+
+        for linea in arch:
+            fila = linea.strip().split(",")
+            try:
+                id_actual = int(fila[0])
+            except:
+                continue
+
+        if id_actual == id_buscar:
+            encontrado = True
+        else:
+            lineas_filtradas.append(linea)
+    
+    except FileNotFoundError:
+        print("ERROR: archivo pasajes.csv no encontrado")
+        return
+    
+    finally:
+        try:
+            arch.close()
+        except NameError:
+            pass
+    
+    if not encontrado:
+        print("No se hallaron coincidencias para el ID ingresado")
+        return
+    
+    try:
+        arch = open("pasaje.csv","w")
+        for linea in lineas_filtradas:
+            arch.write(linea)
+    
+    except Exception as mensaje:
+        print("ERROR:", mensaje)
+        return
+    
+    finally:
+        try:
+            arch.close()
+        except NameError:
+            pass
+    
+    print(f"Pasaje con ID {id_buscar} eliminado exitosamente \n")
+
+
+def buscar_pasaje_por_id():
+    try:
+        id_buscar = input("Ingrese el ID del pasaje (o 'X' para salir): ").strip()
+
+        if id_buscar.upper() == "X":
+            print("B煤squeda cancelada por el usuario.\n")
+            return
+
+        assert id_buscar.isdigit(), "El ID debe contener solo n煤meros."
+
+        encontrado = False
+        dni_pasajero = None
+
+        try:
+            arch_pasajes = open("pasajes.csv", "r")
+            for linea in arch_pasajes:
+                fila = linea.strip().split(",")
+                if len(fila) < 4:
+                    continue
+
+                id_pasaje_arch = fila[0].strip()
+                dni_arch = fila[1].strip()
+
+                if id_pasaje_arch == id_buscar:
+                    encontrado = True
+                    dni_pasajero = dni_arch
+                    break
+
+        except FileNotFoundError:
+            print("ERROR: archivo pasajes.csv no encontrado.")
+            return
+
+        finally:
+            try:
+                arch_pasajes.close()
+            except NameError:
+                pass
+
+        if not encontrado:
+            print("No se encontr贸 ning煤n pasaje con ese ID. Intente nuevamente.\n")
+            return buscar_pasaje_por_id()
+
+        nombre = ""
+        apellido = ""
+
+        try:
+            arch_pasajeros = open("pasajeros.csv", "r")
+            for linea in arch_pasajeros:
+                fila = linea.strip().split(",")
+                if len(fila) < 3:
+                    continue
+                dni_arch = fila[0].strip()
+                if dni_arch == dni_pasajero:
+                    nombre = fila[1].strip()
+                    apellido = fila[2].strip()
+                    break
+
+        except FileNotFoundError:
+            print("ERROR: archivo pasajeros.csv no encontrado.")
+            return
+
+        finally:
+            try:
+                arch_pasajeros.close()
+            except NameError:
+                pass
+
+        print("\n=== RESULTADO DE LA B脷SQUEDA ===")
+        print(f"ID del pasaje: {id_buscar}")
+        print(f"DNI del pasajero: {dni_pasajero}")
+        print(f"Nombre del pasajero: {nombre} {apellido}")
+        print("===============================\n")
+
+    except AssertionError as mensaje:
+        print("ERROR:", mensaje)
+        return buscar_pasaje_por_id()
+
+
 def main():
     print("="*100)
     print("BIENVENIDO AL SISTEMA DE VENTAS DE PASAJES".center(100))
@@ -499,5 +643,4 @@ def main():
             print("Opcion invalida, intente nuevamente \n\n")
         except AssertionError:
             print("Opcion invalida, intente nuevamente \n\n")
-
 main()
